@@ -78,7 +78,7 @@ def handle_deposit():
     # 유저의 seedmoney를 입금액(amount)만큼 증가시킴
     collection.update_one({'_id': user['_id']}, {'$inc': {'seedmoney': amount}})
 
-    flash('입금이 완료되었습니다.')
+    #flash('입금이 완료되었습니다.')
     return redirect('/personal_info')
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -116,6 +116,7 @@ def personal_info():
 
 @app.route('/withdraw', methods=['GET', 'POST'])
 def withdraw():
+    
     if request.method == 'POST':
         amount = int(request.form['amount'])
 
@@ -135,6 +136,7 @@ def withdraw():
 
 @app.route('/open_withdraw')
 def open_withdraw():
+    flash("보유한 금액 이하의 금액을 입력해주세요.")
     return redirect('/withdraw')
 
 @app.route('/registering')

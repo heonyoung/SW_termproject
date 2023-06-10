@@ -10,7 +10,7 @@ user = db["info"]
 #logged_in.update_one({},{"$set": {"logged_in":0}})
 #pos = {"market_coin" : 100,"market_price" : 100}
 #collection.insert_one(pos)
-user.update_one({"id":"guseh"},{"$set":{"seedmoney" : 1000000}})
+logged_in.update_one({"logged_in":1},{"$set":{"logged_in" : 0}})
 #result = collection.find()
 #for i in result:
 #    print(i["logged_in"])
