@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="{{ url_for('static',filename='css/boardstyle.css')}}">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>  
+</head>
+<body>
+  <header>
+    <h1>Home</h1>
+    {% if logged_in %}
+    <button class="logout-button" onclick="redirectToLogout()">로그아웃</button>
+    {% else %}
+    <button class="login-button" onclick="redirectToLogin()">로그인</button>
+    <button class="register-button" onclick="redirectToRegister()">회원가입</button>
+    {% endif %}
+  </header>
+  <script>
+    function navigateTo(sectionId) {
+      // Scroll to the section with the given ID
+      document.getElementById(sectionId).scrollIntoView({ behavior: 'smooth' });
+    }
+  </script>
+
+  <style>
+    .nav-button {
+      background-color: transparent;
+      border: 1px solid #FFA96E; /* Add border */
+      border-radius: 5px; /* Optional: Add border radius for rounded corners */
+      color: #000;
+      cursor: pointer;
+      font-size: 16px;
+      padding: 10px 20px; /* Optional: Adjust padding */
+      text-decoration: none; /* Change to "none" for buttons, not links */
+      display: block; /* Make buttons block-level elements */
+      width: 100%; /* Set width to 100% */
+      box-sizing: border-box; /* Include border in the width calculation */
+      margin: 5px 0; /* Optional: Add margin for spacing */
+    }
+  
+    .nav-button:hover {
+      background-color: #FFA96E; /* Optional: Add background color on hover */
+    }
+  </style>
+  
+  <nav>
+    <ul> 
+      <li><button class="nav-button" onclick="redirectToDashboard()"  href="#coin">Home</button></li>
+      <li><button class="nav-button" onclick="redirectToPersonal()" href="#profile">Personal Information</button></li>
+    </ul>
+  </nav>  
+  <style>
+    table{
+      border:1px solid #FFA96E;
+      border-collapse:collapse;
+      padding: 30px 20px;
+    }
+    th,td{
+      border:1px solid #FFA96E;
+    }
+  </style>
+  {% if logged_in %}
+  <div class="wrapper">
+    <div class="info">
+      <h2>개인 정보</h2>
+      <p><strong>이름:</strong> {{result.name}}</p>
+      <p><strong>보유한 코인 갯수:</strong> {{result.coin}}</p>
+      <h2>매도</h2>
+    <form onsubmit="event.preventDefault(); sell_to_market();">
+      <div class="form-group">
+        <label for="sell-amount-input">매도 금액:</label>
+        <input type="text" id="sell-amount-input" name="sell-amount-input" required>
+      </div>
+      <div class="form-group">
+        <label for="sell-quantity-input">매도 개수:</label>
+        <input type="text" id="sell-quantity-input" name="sell-quantity-input" required>
+      </div>
+      <input type="submit" value="매도">
+    </form>
+  </div>
+    
+    <div class="selling-container">
+      <table class="selling-table" border="1">
+        <caption><h2>My Selling Coin</h2></caption>
+        <thead>
+          <tr>
+            <th>Amount</th>
+            <th>Price Per Coin</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for selling in sellings %}
+          <tr>
+            <td>{{ selling.amount }}</td>
+            <td>{{ selling.ppc }}</td>
+            <td><button class="cancel-button" data-id="{{ selling._id }}" onclick="cancelSell('{{ selling._id }}')">Cancel</button></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  
+    <div class="coin_section">
+      <div class="tmp">
+      <h2>Market Coin Count</h2>
+      <p><strong>현재 코인:</strong> {{market_result.market_coin}}</p>
+      <p><strong>가격:</strong> ${{market_result.market_price}}</p>
+      <form onsubmit="event.preventDefault(); buy_from_market();">
+          <div class="market-group">
+              <label for="buy-input">구매 개수</label>
+              <input type="text" id="buy-input" name="buy-input" required>
+          </div>
+          <input type="submit" value="구매">
+      </form>
+    </div>
+    </div>
+  
+    <div class="coin_section">
+      
+      <table class="transaction-table">
+        <caption><h2>My Transaction History</h2></caption>
+        <thead>
+          <tr>
+            <th>Type</th>
+            <th>Amount</th>
+            <th>Price Per Coin</th>
+            <th>Time</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for transaction in transactions %}
+          <tr>
+            <td>{{ transaction.type }}</td>
+            <td>{{ transaction.amount }}</td>
+            <td>{{ transaction.ppc }}</td>
+            <td>{{ transaction.time }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+
+
+
+
+  {% endif %}
+  <div class="container">
+    <div class="tabs">
+      <div class="graph">
+        <h2>코인 시세</h2>
+        <canvas id="coin-graph"></canvas>
+      </div>
+    </div>
+  
+  
+  <div class="coin-list">
+    <h2>시장에 등록된 코인 목록</h2>
+    {% if logged_in %}
+    <table class="selling-table">
+      <thead>
+        <tr>
+          <th>코인</th>
+          <th>가격</th>
+          <th>구매</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for coin in history %}
+        {% if coin.type == "sell" and coin.user != g.user['_id'] %}
+        <tr>
+          <td>{{ coin.amount }}</td>
+          <td>${{ coin.ppc }}</td>
+          <td>
+            <button class="buy-button" onclick="buyCoin('{{ coin._id }}')">구매</button>
+          </td>
+        </tr>
+        {% endif %}
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <p>로그인 후에 시장에 등록된 코인을 구매할 수 있습니다.</p>
+    {% endif %}
+  </div>
+</div>
+  
+  <div class="description">
+    <div class="description-container">
+      <div class="description-left">
+        <h2>Coin</h2>
+        <p>고객센터: 0000-0000<br>
+        주소: 서울특별시 중구 필동로 1길 30<br>
+        회사명: 동구대학교 소프트웨어공학 설계<br>
+        대표: 정헌영, 채윤승<br>
+        사업자등록번호: 000-00-00008<br>
+        가상자산사업자 등록번호: 2021-00기사</p>
+      </div>
+      <div class="description-right">
+        <p>가상자산은 고위험 상품으로써 투자금의 전부 또는 일부 손실을 초래할 수 있습니다.</p>
+        <p>Follow us: <a href="#">Twitter</a> <a href="#">Facebook</a> <a href="#">Medium</a> <a href="#">Naver</a> <a href="#">LinkedIn</a> <a href="#">YouTube</a></p>
+        <p>결제 수단: Samsung Pay, Naver Pay, KakaoPay</p>
+        <p>© 2017 - 2023 Dunamu Inc. All rights reserved.</p>
+      </div>
+    </div>
+  </div>
+
+  
+    <script>
+
+
+        // 그래프 데이터를 가져와서 그래프를 그리는 함수
+  function drawCoinGraph() {
+    // 서버에서 코인 시세 데이터를 가져옵니다.
+    fetch('/coin_price_over_time')
+      .then(function(response) {
+        return response.json();
+      })
+      .then(function(data) {
+        // 가져온 데이터를 기반으로 그래프를 그립니다.
+        var canvas = document.getElementById('coin-graph');
+        var ctx = canvas.getContext('2d');
+        var labels = Object.keys(data);
+        var prices = Object.values(data);
+
+        new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: labels,
+            datasets: [
+              {
+                label: 'Coin Price',
+                data: prices,
+                borderColor: 'rgb(75, 192, 192)',
+                backgroundColor: 'rgb(75, 192, 192, 0.2)',
+                tension: 0.4,
+              },
+            ],
+          },
+          options: {
+            scales: {
+              x: {
+                display: true,
+                title: {
+                  display: true,
+                  text: 'Time',
+                },
+              },
+              y: {
+                display: true,
+                title: {
+                  display: true,
+                  text: 'Price',
+                },
+              },
+            },
+          },
+        });
+      });
+  }
+
+  // 페이지 로드 시 그래프를 그립니다.
+  window.addEventListener('DOMContentLoaded', drawCoinGraph);
+      function redirectToLogin() {
+          window.location.href = "/login";
+      }
+  
+      function redirectToLogout() {
+          window.location.href = "/logout";
+      }
+  
+      function redirectToRegister() {
+          window.location.href = "/registering";
+      }
+  
+      function redirectToPersonal() {
+          window.location.href = "/personal_info";
+      }
+  
+      function redirectToDashboard() {
+          window.location.href = "/";
+      }
+      
+      function buyCoin(coinId) {
+        {% if logged_in %}
+        // 구매 로직 작성
+        // coinId를 활용하여 구매할 코인을 식별하고 구매 로직을 수행합니다.
+        // 구매가 성공하면 페이지를 새로고침하여 데이터를 업데이트합니다.
+        fetch('/buy-market', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            coinId: coinId
+          })
+        })
+          .then(function(response) {
+            return response.json();
+          })
+          .then(function(data) {
+            if (data.status === 'success') {
+              location.reload(); // 페이지 새로고침하여 데이터 업데이트
+            } else {
+              alert('코인 구매에 실패했습니다.');
+            }
+          });
+        {% else %}
+        alert('코인을 구매하려면 로그인이 필요합니다.');
+        {% endif %}
+      }
+      
+      function buy_from_market(coinId) {
+        {% if logged_in %}
+        var buyInput = document.getElementById('buy-input');
+        var buyQuantity = buyInput.value;
+        var marketPrice = {{ market_result.market_price }};
+      
+        fetch('/buy', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            coinId: coinId,
+            quantity: buyQuantity,
+            marketPrice: marketPrice
+          })
+        })
+        .then(function(response) {
+          return response.json();
+        })
+        .then(function(data) {
+          if (data.status == 'success') {
+            location.reload(); // reload page to update the data
+          } else {
+            alert('Failed to buy the coin.');
+          }
+        });
+        {% else %}
+        alert('Please log in to buy coins.');
+        {% endif %}
+      }
+      function sell_to_market() {
+        {% if logged_in %}
+        var sellAmountInput = document.getElementById('sell-amount-input');
+        var sellQuantityInput = document.getElementById('sell-quantity-input');
+        fetch('/sell', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            amount: sellAmountInput.value,
+            quantity: sellQuantityInput.value
+          })
+        })
+          .then(function(response) {
+            return response.json();
+          })
+          .then(function(data) {
+            if (data.status == 'success') {
+              location.reload(); // reload page to update the data
+            } else {
+              alert('Failed to sell the coin.');
+            }
+          });
+        {% else %}
+        alert('Please log in to sell coins.');
+        {% endif %}
+      }
+      
+      function cancelSell(transactionId) {
+        fetch('/cancel-sell', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            transaction_id: transactionId
+          })
+        })
+          .then(function(response) {
+            return response.json();
+          })
+          .then(function(data) {
+            if (data.status == 'success') {
+              location.reload(); // reload page to update the data
+            } else {
+              alert('Failed to cancel the selling.');
+            }
+          });
+      }  
+
+      $(document).ready(function() {
+        $('.cancel-button').click(function() {
+            var id = $(this).data('id');
+            fetch('/cancel', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    id: id
+                })
+            })
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(data) {
+                if(data.status == 'success') {
+                    location.reload();
+                } else {
+                    alert('Failed to cancel the selling.');
+                }
+            });
+        });
+    });
+  </script>
+  
+</body>
+</html>

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>회원가입</title>
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/regstyle.css')}}">
+
+</head>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<body>
+    <div class = "container">
+    <form id="registrationForm">
+        <h1>회원가입</h1>
+        <label for="id">아이디:</label>
+        <input type="text" id="id" name="id" required><br><br>
+        
+        <label for="pw">비밀번호:</label>
+        <input type="password" id="pw" name="pw" required><br><br>
+        
+        <label for="name">이름:</label>
+        <input type="text" id="name" name="name" required><br><br>
+        
+        <label for="birth">생년월일:</label>
+        <input type="text" id="birth" name="birth" required><br><br>
+
+        <label for="number">전화번호:</label>
+        <input type="text" id="number" name="number" required><br><br>
+        
+        <label for="email">이메일:</label>
+        <input type="email" id="email" name="email" required><br><br>
+        
+        <button type="button" onclick="submitForm()">회원가입</button>
+
+        <button type="button" onclick="gotohome()">홈으로</button>
+    </form>
+</div>
+    <script>
+        function validateInputs(user) {
+            var pwPattern = /^.{8,12}$/;  // 비밀번호는 8~12자
+            var birthPattern = /^\d{8}$/;  // 생년월일은 숫자로만 8자
+            var numberPattern = /^\d{11}$/;  // 전화번호는 숫자로만 11자
+
+            if (!pwPattern.test(user.pw)) {
+                alert("비밀번호는 8~12자이어야 합니다.");
+                return false;
+            }
+
+            if (!birthPattern.test(user.birth)) {
+                alert("생년월일은 숫자로만 8자이어야 합니다.");
+                return false;
+            }
+
+            if (!numberPattern.test(user.number)) {
+                alert("전화번호는 숫자로만 11자이어야 합니다.");
+                return false;
+            }
+
+            return true;
+        }
+
+        async function checkUserId(id) {
+            const response = await fetch(`/check-user-id/${id}`);
+            const data = await response.json();
+
+            if (!data.valid) {
+                alert("아이디가 이미 존재합니다.");
+                return false;
+            }
+
+            return true;
+        }
+
+        async function submitForm() {
+            var id = document.getElementById('id').value;
+            var pw = document.getElementById('pw').value;
+            var name = document.getElementById('name').value;
+            var birth = document.getElementById('birth').value;
+            var number = document.getElementById('number').value;
+            var email = document.getElementById('email').value;
+    
+            var user = {
+                id: id,
+                pw: pw,
+                name: name,
+                birth: birth,
+                number: number,
+                email: email
+            };
+    
+            if (!validateInputs(user)) return;
+            if (!await checkUserId(id)) return;
+
+            fetch('/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(user)
+            })
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(result) {
+                alert(result.message); // 회원가입 성공 메시지를 alert로 표시
+                if (result.redirect) {
+                    window.location.href = result.redirect; // 리다이렉트 처리
+                }
+            })
+            .catch(function(error) {
+                console.error('오류 발생:', error);
+            });
+        };
+
+        function gotohome(){
+            window.location.href = "/"
+        }
+    </script>
+</body>
+</html>

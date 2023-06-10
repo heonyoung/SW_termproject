@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Deposit</title>
+  <link rel="stylesheet" href="{{ url_for('static',filename='css/deposstyle.css')}}">
+</head>
+<body>
+  <div class="container">
+	<h2>Deposit</h2>
+    <form action="/deposit" method="POST">
+      <div class="form-group">
+        <label for="account">계좌명:</label>
+        <input type="text" id="account" name="account" placeholder="Enter your account name" required>
+      </div>
+      <div class="form-group">
+        <label for="pin">PIN 번호:</label>
+        <input type="password" id="pin" name="pin" placeholder="Enter your PIN number" required>
+      </div>
+      <div class="form-group">
+        <label for="amount">입금액:</label>
+        <input type="number" id="amount" name="amount" placeholder="Enter the deposit amount" required>
+      </div>
+      <div class="form-group">
+        <input type="submit" value="Deposit">
+      </div>
+    </form>
+  </div>
+</body>
+</html>

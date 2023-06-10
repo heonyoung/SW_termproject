@@ -1,0 +1,141 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background-color: #ffffff; /* 흰색 배경 */
+     
+  }
+  
+  header {
+    background-color: #FF7F50;
+    padding: 10px 35px;
+    color: #fff;
+    display: flex;
+    align-items: center;
+  }
+  
+  .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 20px;
+    background-color: #FFFAF3;
+    border: 1px solid #FFA96E;
+    border-radius: 5px;
+  } 
+   
+  h1 {
+    margin-right: auto;
+  }
+  h2 {
+    margin-top: 0;
+    color: #FF7F50;
+  }
+  
+  p {
+    margin: 0;
+  }
+  
+  .info-section {
+    flex-basis:60%;
+  }
+  
+  .info-label {
+    display: inline-block;
+    width: 150px;
+    font-weight: bold;
+    color: #FF7F50;
+  }
+  
+  .change-button,
+  .password-button {
+    margin-left: 10px;
+    background-color: #FF7F50;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    vertical-align: middle;
+  }
+  
+  .password-button {
+    align-self: flex-end; /* 버튼을 오른쪽 아래로 정렬 */
+    margin-top: 20px; /* 버튼 위에 간격 추가 */
+  }
+
+  .logout-button,
+  .login-button,
+  .register-button {
+    background-color: #FFA96E;
+    color: #fff;
+    border: none;
+    padding: 10px 25px;
+    cursor: pointer;
+    margin-left: 10px;
+  }
+  
+  .login-button {
+    margin-left: auto;
+  }
+  
+  nav {
+    background-color: #FFFAF3;
+    padding: 10px;
+  }
+  
+  nav ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  
+  nav ul li {
+    display: inline-block;
+    margin-right: 10px;
+  }
+  
+  nav ul li a {
+    color: #FF7F50;
+    text-decoration: none;
+    padding: 5px;
+  }
+
+  .change-button:hover,
+  .password-button:hover {
+    background-color: #FF8C61;
+  }
+  
+  .info-section p,
+  .coin-info{
+    font-family: "Nanum Gothic", sans-serif; /* 원하는 한글 글꼴을 적용하세요 */
+    color: #000000; /* 원하는 색상 코드로 변경하세요 */
+  }
+  
+
+
+  .container p {
+    margin-bottom: 10px;
+  }
+  .description {
+    background-color: #FFA96E;
+    padding: 20px;
+    color: #fff;
+    margin-top: 200px;
+    margin-bottom: 0; /* Add this line to remove the bottom margin */
+  }
+  
+  
+  .description-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+   
+  }
+  
+  .description-left {
+    flex-basis: 50%;
+  }
+  
+  .description-right {
+    flex-basis: 50%;
+  }

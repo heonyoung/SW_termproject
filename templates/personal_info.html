@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Personal_info</title>
+  <link rel="stylesheet" href="{{ url_for('static',filename='css/personalstyle.css')}}">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>  
+</head>
+<body>
+  <header>
+    <h1>Personal_info</h1>
+    {% if logged_in %}
+    <button class="logout-button" onclick="redirectToLogout()">로그아웃</button>
+    {% else %}
+    <button class="login-button" onclick="redirectToLogin()">로그인</button>
+    <button class="register-button" onclick="redirectToRegister()">회원가입</button>
+    {% endif %}
+  </header>
+  <script>
+    function navigateTo(sectionId) {
+      // Scroll to the section with the given ID
+      document.getElementById(sectionId).scrollIntoView({ behavior: 'smooth' });
+    }
+  </script>
+
+  <style>
+    .nav-button {
+      background-color: transparent;
+      border: 1px solid #FFA96E; /* Add border */
+      border-radius: 5px; /* Optional: Add border radius for rounded corners */
+      color: #000;
+      cursor: pointer;
+      font-size: 16px;
+      padding: 10px 20px; /* Optional: Adjust padding */
+      text-decoration: none; /* Change to "none" for buttons, not links */
+      display: block; /* Make buttons block-level elements */
+      width: 100%; /* Set width to 100% */
+      box-sizing: border-box; /* Include border in the width calculation */
+      margin: 5px 0; /* Optional: Add margin for spacing */
+    }
+  
+    .nav-button:hover {
+      background-color: #FFA96E; /* Optional: Add background color on hover */
+    }
+  </style>
+  
+  <nav>
+    <ul> 
+      <li><button class="nav-button" onclick="redirectToDashboard()"  href="#coin">Home</button></li>
+      <li><button class="nav-button" onclick="redirectToPersonal()" href="#profile">Personal Information</button></li>
+    </ul>
+  </nav>  
+
+  {% if logged_in %}
+  <div class="container">
+    <div class="info-section">
+      <h2>기본 정보</h2>
+      <!-- <p>{{ result }}</p> -->
+      <p><span class="info-label">이름:</span> {{result.id}}
+      <p><span class="info-label">생년월일:</span> {{result.birth}} 
+      <p><span class="info-label">이메일:</span> {{result.email}}
+      <p><span class="info-label">전화번호:</span> {{result.number}}
+    </div>
+    <div class="info-section">
+      <h2>보유 자산</h2>
+      <div class="seed-money">
+        <p></p>
+        <span style="color: #FF7F50;">보유 시드머니 : 
+          <p> ${{result.seedmoney}} </p>
+        <button class="change-button" onclick="openDeposit()">입금</button>
+        <button class="change-button" onclick="openWithdraw()">출금</button>
+      </div>
+      
+      <div class="seeds">
+        <div class="coin-info">
+          <p></p>
+          <span class="coin-label" style="color: #FF7F50;">보유 코인 개수 : 
+            <p> {{result.coin}} </p>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% else %}
+  <p>You are not logged in.</p>
+  {% endif %}
+  <script>
+    function redirectToLogin() {
+      window.location.href = "/login";
+    }
+
+    function redirectToLogout() {
+      window.location.href = "/logout";
+    }
+
+    function redirectToRegister(){
+      window.location.href = "/registering";
+    }
+    function redirectToPersonal(){
+      window.location.href ="/personal_info";
+    }
+    function redirectToDashboard(){
+      window.location.href = "/";
+    }
+    function openDeposit() {
+      window.location.href = "/deposits";
+    }
+    function openWithdraw() {
+      window.location.href = "/open_withdraw";
+    }
+  </script>
+  <div class="description">
+    <div class="description-container">
+      <div class="description-left">
+        <h2>Coin</h2>
+        <p>고객센터: 0000-0000<br>
+        주소: 서울특별시 중구 필동로 1길 30<br>
+        회사명: 동구대학교 소프트웨어공학 설계<br>
+        대표: 정헌영, 채윤승<br>
+        사업자등록번호: 000-00-00008<br>
+        가상자산사업자 등록번호: 2021-00기사</p>
+      </div>
+      <div class="description-right">
+        <p>가상자산은 고위험 상품으로써 투자금의 전부 또는 일부 손실을 초래할 수 있습니다.</p>
+        <p>Follow us: <a href="#">Twitter</a> <a href="#">Facebook</a> <a href="#">Medium</a> <a href="#">Naver</a> <a href="#">LinkedIn</a> <a href="#">YouTube</a></p>
+        <p>결제 수단: Samsung Pay, Naver Pay, KakaoPay</p>
+        <p>© 2017 - 2023 Dunamu Inc. All rights reserved.</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
